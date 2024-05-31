@@ -6,7 +6,7 @@
 #include "server.h"
 
 #define SERVER_IP "127.0.0.1" // 서버 IP 주소
-#define SERVER_PORT 12345 // 서버 포트 번호
+#define SERVER_PORT 87301 // 서버 포트 번호
 
 int main() {
     int sock = 0;
