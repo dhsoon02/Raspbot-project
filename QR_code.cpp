@@ -79,10 +79,3 @@ int main() {
     detect();
     return 0;
 }
-
-//실행 명령어
-/*
-cd "/Users/donghyeonsoon/Documents/컴퓨터 비전 개론/시프/C_ver/"
-g++ QR_code.cpp -o QR_code `pkg-config --cflags --libs opencv4 zbar` -std=c++11
-./QR_code
-*/
