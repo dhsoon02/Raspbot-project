@@ -8,7 +8,7 @@ Repository for systems programming course assignments
 
 ### Team name and members
 *: 0% project contribution
-- **Team name:** DGIST_Raspbot
+- **Team name:** 프리스타일
 - **팀원:** 
   - 순동현 
   - 정해주
