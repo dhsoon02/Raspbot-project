@@ -6,9 +6,8 @@ In this project, we will use raspbot on a Raspberry Pi 4 to perform tasks such a
 ## Project Description
 Repository for systems programming course assignments
 
-*: 0% project contribution
-
 ### Team name and members
+*: 0% project contribution
 - **Team name:** DGIST_Raspbot
 - **팀원:** 
   - 순동현 
