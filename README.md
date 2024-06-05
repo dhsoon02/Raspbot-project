@@ -11,5 +11,5 @@ Repository for systems programming course assignments
 - **팀원:**
   - 순동현 
   - 정해주
-  - 이완서
+  - 
 
