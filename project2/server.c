@@ -106,6 +106,7 @@ void setItem(DGIST* dPtr) {
 	printMap(dPtr);
 }
 
+
 // Broadcast map information to all clients
 void* broadcastInformation(void* arg) {
 
