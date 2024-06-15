@@ -30,7 +30,7 @@ int sock;
 ClientAction clientAction;
 pthread_t updateThread;
 
-DGIST dgist_data; // 전역 변수로 선언
+DGIST dgist_data; // 전역 변수~
 
 // Function prototypes
 void signalHandler(int sig);
