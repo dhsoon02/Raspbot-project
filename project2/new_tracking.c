@@ -15,6 +15,7 @@
 
 #define I2C_ADDR 0x16
 
+
 int fd;
 
 void write_u8(int reg, int data) {
