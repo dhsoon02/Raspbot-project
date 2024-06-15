@@ -3,60 +3,94 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include "server.h"
+#include <pthread.h>
+#include "client.h"
 
-#define SERVER_IP "127.0.0.1" // 서버 IP 주소
-#define SERVER_PORT 87301 // 서버 포트 번호
+void* receive_updates(void* arg) {
+    int sock = *(int*)arg;
+    DGIST dgist;
 
-int main() {
-    int sock = 0;
-    struct sockaddr_in serv_addr;
-    ClientAction clientAction;
+    while (1) {
+        if (receive_update(sock, &dgist) <= 0) {
+            printf("Server closed the connection.\n");
+            close(sock);
+            pthread_exit(NULL);
+        }
 
-    // 소켓 생성
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        printf("\n 소켓 생성 실패 \n");
-        return -1;
+        // Print the received update
+        printf("==========MAP==========\n");
+
+        for (int i = 0; i < MAP_ROW; i++) {
+            for (int j = 0; j < MAP_COL; j++) {
+                int player_found = 0;
+                
+                // Check if any player is at this position
+                for (int k = 0; k < MAX_CLIENTS; k++) {
+                    if (dgist.players[k].row == i && dgist.players[k].col == j) {
+                        printf("O ");
+                        player_found = 1;
+                        break;
+                    }
+                }
+
+                if (!player_found) {
+                    switch (dgist.map[i][j].item.status) {
+                        case nothing:
+                            printf("- ");
+                            break;
+                        case item:
+                            printf("%d ", dgist.map[i][j].item.score);
+                            break;
+                        case trap:
+                            printf("x ");
+                            break;
+                    }
+                }
+            }
+            printf("\n");
+        }
+
+        printf("========PLAYERS========\n");
+        for (int i = 0; i < MAX_CLIENTS; i++) {
+            printf("Player %d: Position (%d, %d), Score: %d, Bombs: %d\n",
+                i + 1, dgist.players[i].row, dgist.players[i].col, dgist.players[i].score, dgist.players[i].bomb);
+        }
+        printf("=======================\n");
     }
 
-    memset(&serv_addr, '0', sizeof(serv_addr));
+    return NULL;
+}
+
+int connect_to_server(const char *server_ip, int server_port) {
+    int sock;
+    struct sockaddr_in serv_addr;
+
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        printf("\n Socket creation error \n");
+        return -1;
+    }
 
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(SERVER_PORT);
+    serv_addr.sin_port = htons(server_port);
 
-    // 서버 주소 변환
-    if (inet_pton(AF_INET, SERVER_IP, &serv_addr.sin_addr) <= 0) {
-        printf("\n 서버 주소 변환 실패 \n");
+    if (inet_pton(AF_INET, server_ip, &serv_addr.sin_addr) <= 0) {
+        printf("\nInvalid address/ Address not supported \n");
         return -1;
     }
 
-    // 서버에 연결
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        printf("\n 서버 연결 실패 \n");
+        printf("\nConnection Failed \n");
         return -1;
     }
 
-    // 예시: (1, 2) 위치로 이동하고 함정 설치
-    clientAction.row = 1;
-    clientAction.col = 2;
-    clientAction.action = setBomb;
+    printf("Connected to the server.\n");
+    return sock;
+}
 
-    // 서버에 데이터 전송
-    send(sock, &clientAction, sizeof(ClientAction), 0);
-    printf("서버에 데이터 전송 완료: row=%d, col=%d, action=%d\n", clientAction.row, clientAction.col, clientAction.action);
+int send_action(int sock, ClientAction *cAction) {
+    return send(sock, cAction, sizeof(ClientAction), 0);
+}
 
-    // 서버로부터 게임 상태 정보 수신
-    DGIST dgist;
-    int valread = read(sock, &dgist, sizeof(DGIST));
-    if (valread > 0) {
-        printf("서버로부터 게임 상태 정보 수신 완료\n");
-        // 수신한 게임 상태 정보를 활용한 로직 작성
-        // 예시: 첫 번째 플레이어의 점수 출력
-        printf("Player 1 score: %d\n", dgist.players[0].score);
-    }
-
-    // 소켓 닫기
-    close(sock);
-
-    return 0;
+int receive_update(int sock, DGIST *dgist) {
+    return recv(sock, dgist, sizeof(DGIST), 0);
 }
