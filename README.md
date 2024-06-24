@@ -12,12 +12,3 @@ Repository for systems programming course assignments
 I also put all the rest of the codes I used (client,server,qr,tracking, etc.) The main.cpp code is the final code I used in the demo, which is a combination of all the codes I used. Only the qr recognition code is C++, the rest of the codes are C code.
 
 
-
-### Team name and members
-*: 0% project contribution
-- **Team name:** 프리스타일
-- **팀원:** 
-  - 순동현 
-  - 정해주
-  - 이완서*
-
